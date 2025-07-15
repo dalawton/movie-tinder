@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SwipeableCard from '../../components/SwipeableCard';
-import { getUserId } from '../../utils/user';
+import { getUserId } from '../../../utils/user';
 import dotenv from 'dotenv';
 
 dotenv.config();

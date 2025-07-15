@@ -4,9 +4,6 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import SwipeableCard from '../../components/SwipeableCard';
 import { getUserId } from '../../../utils/user';
-import dotenv from 'dotenv';
-
-dotenv.config();
 
 type Movie = {
   Title: string;
@@ -15,7 +12,7 @@ type Movie = {
   imdbID: string;
 };
 
-const API_KEY = process.env.REACT_APP_API_URL;
+const API_KEY = process.env.NEXT_PUBLIC_OMDB_API_KEY;
 
 export default function SwipePage() {
   const searchParams = useSearchParams();

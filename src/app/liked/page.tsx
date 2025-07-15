@@ -87,7 +87,7 @@ export default function LikedPage() {
               No liked movies yet
             </h2>
             <p className="text-gray-500 mb-6">
-              Start swiping to discover movies you'll love!
+              Start swiping to discover movies you&apos;ll love!
             </p>
             <button
               onClick={handleStartSwiping}

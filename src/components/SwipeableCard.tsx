@@ -41,8 +41,8 @@ export default function SwipeableCard({
   }));
 
   const bind = useDrag(
-    ({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
-      const trigger = velocity > 0.2;
+   ({ args: [index], down, movement: [mx], direction: [xDir], velocity: [vx] }) => {
+      const trigger = Math.abs(vx) > 0.2;
       const dir = xDir < 0 ? -1 : 1;
 
       if (!down && trigger) gone.add(index);

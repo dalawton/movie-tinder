@@ -34,7 +34,7 @@ export default function SwipePage() {
 
     const saved = localStorage.getItem(`likes-${USER_ID}`);
     if (saved) setLiked(JSON.parse(saved));
-  }, [genre]);
+  }, [genre, USER_ID]);
 
   const handleSwipe = (dir: 'left' | 'right', movie: Movie) => {
     if (dir === 'right') {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import SwipeableCard from '../../components/SwipeableCard';
 import { getUserId } from '../../../utils/user';
 import { Suspense } from 'react';
@@ -16,8 +15,6 @@ type Movie = {
 const API_KEY = process.env.NEXT_PUBLIC_OMDB_API_KEY;
 
 function SwipePageContent() {
-  const searchParams = useSearchParams();
-  const genre = searchParams.get('genre');
   const USER_ID = getUserId();
 
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -30,9 +27,7 @@ function SwipePageContent() {
       try {
         setLoading(true);
         setError(null);
-        
-        const searchTerm = genre || 'star';
-        const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(searchTerm)}&type=movie`);
+        const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=""&type=movie`);
         
         if (!res.ok) {
           throw new Error('Failed to fetch movies');
@@ -105,7 +100,7 @@ function SwipePageContent() {
   return (
     <main className="flex flex-col items-center min-h-screen p-6">
       <h1 className="text-3xl font-bold mb-4 text-center">
-        {genre ? `${genre} Movies` : `🎲 Random Movies`}
+        {`🎲 Random Movies`}
       </h1>
 
       {/* Card Area */}

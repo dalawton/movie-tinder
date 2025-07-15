@@ -45,12 +45,20 @@ export default function SwipePage() {
   };
 
   return (
-    <main className="flex flex-col items-center min-h-screen p-6">
-      <h1 className="text-3xl font-bold">
-        {genre ? `${genre} Movies` : `🎲 Random Movies`}
-      </h1>
+  <main className="flex flex-col items-center min-h-screen p-6">
+    <h1 className="text-3xl font-bold mb-4 text-center">
+      {genre ? `${genre} Movies` : `🎲 Random Movies`}
+    </h1>
+
+    {/* Card Area */}
+    <div className="relative w-full flex justify-center mb-8">
       <SwipeableCard movies={movies} onSwipe={handleSwipe} />
-      <p className="mt-4">❤️ Liked: {liked.length}</p>
-    </main>
-  );
+    </div>
+
+    {/* Liked Counter */}
+    <div className="mt-auto pt-6 z-10">
+      <p className="text-lg font-semibold">❤️ Liked: {liked.length}</p>
+    </div>
+  </main>
+);
 }

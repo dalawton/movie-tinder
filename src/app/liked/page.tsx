@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Heart, ArrowLeft, Calendar, Star } from 'lucide-react';
 
 interface Movie {
   id: number;
@@ -64,11 +63,10 @@ export default function LikedPage() {
               onClick={handleBackToHome}
               className="p-2 bg-white rounded-full shadow-md hover:shadow-lg transition-shadow"
             >
-              <ArrowLeft size={20} />
+              ← Back
             </button>
             <h1 className="text-2xl font-bold flex items-center gap-2">
-              <Heart className="text-red-500" size={24} />
-              Liked Movies ({likedMovies.length})
+              ❤️ Liked Movies ({likedMovies.length})
             </h1>
           </div>
           {likedMovies.length > 0 && (
@@ -84,7 +82,7 @@ export default function LikedPage() {
         {/* Movies Grid */}
         {likedMovies.length === 0 ? (
           <div className="text-center py-16">
-            <Heart className="mx-auto mb-4 text-gray-400" size={48} />
+            <div className="text-6xl mb-4">❤️</div>
             <h2 className="text-xl font-semibold text-gray-600 mb-2">
               No liked movies yet
             </h2>
@@ -115,7 +113,7 @@ export default function LikedPage() {
                     onClick={() => removeFromLiked(movie.id)}
                     className="absolute top-2 right-2 p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
                   >
-                    <Heart size={16} fill="white" />
+                    ❤️
                   </button>
                 </div>
                 
@@ -126,12 +124,10 @@ export default function LikedPage() {
                   
                   <div className="flex items-center gap-4 mb-3 text-sm text-gray-600">
                     <div className="flex items-center gap-1">
-                      <Calendar size={14} />
-                      {movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}
+                      📅 {movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}
                     </div>
                     <div className="flex items-center gap-1">
-                      <Star size={14} className="text-yellow-500" />
-                      {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
+                      ⭐ {movie.vote_average ? movie.vote_average.toFixed(1) : 'N/A'}
                     </div>
                   </div>
                   

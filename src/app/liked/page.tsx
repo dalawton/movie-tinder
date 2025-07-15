@@ -28,7 +28,7 @@ export default function LikedPage() {
 
   useEffect(() => {
     // Load liked movies from memory storage
-    const stored = window.likedMovies || [];
+    const stored = (window as any).likedMovies || [];
     setLikedMovies(stored);
     setLoading(false);
   }, []);
@@ -37,12 +37,12 @@ export default function LikedPage() {
     const updated = likedMovies.filter(movie => movie.id !== movieId);
     setLikedMovies(updated);
     // Update the global storage
-    window.likedMovies = updated;
+    (window as any).likedMovies = updated;
   };
 
   const clearAllLiked = () => {
     setLikedMovies([]);
-    window.likedMovies = [];
+    (window as any).likedMovies = [];
   };
 
   if (loading) {

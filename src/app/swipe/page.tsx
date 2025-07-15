@@ -47,20 +47,23 @@ export default function SwipePage() {
   };
 
   return (
-  <main className="flex flex-col items-center min-h-screen p-6">
-    <h1 className="text-3xl font-bold mb-4 text-center">
-      {genre ? `${genre} Movies` : `🎲 Random Movies`}
-    </h1>
+    <Suspense fallback={<div className="p-6 text-center">Loading movies...</div>}>
+      <SwipePageContent />
+    </Suspense>
+    <main className="flex flex-col items-center min-h-screen p-6">
+        <h1 className="text-3xl font-bold mb-4 text-center">
+        {genre ? `${genre} Movies` : `🎲 Random Movies`}
+        </h1>
 
-    {/* Card Area */}
-    <div className="relative w-full flex justify-center mb-8">
-      <SwipeableCard movies={movies} onSwipe={handleSwipe} />
-    </div>
+        {/* Card Area */}
+        <div className="relative w-full flex justify-center mb-8">
+        <SwipeableCard movies={movies} onSwipe={handleSwipe} />
+        </div>
 
-    {/* Liked Counter */}
-    <div className="mt-auto pt-6 z-10">
-      <p className="text-lg font-semibold">❤️ Liked: {liked.length}</p>
-    </div>
-  </main>
-);
+        {/* Liked Counter */}
+        <div className="mt-auto pt-6 z-10">
+        <p className="text-lg font-semibold">❤️ Liked: {liked.length}</p>
+        </div>
+    </main>
+    );
 }

@@ -12,6 +12,13 @@ interface Movie {
   genre_ids: number[];
 }
 
+// Extend the Window interface to include likedMovies
+declare global {
+  interface Window {
+    likedMovies: Movie[];
+  }
+}
+
 export default function LikedPage() {
   const [likedMovies, setLikedMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +35,7 @@ export default function LikedPage() {
 
   useEffect(() => {
     // Load liked movies from memory storage
-    const stored = (window as any).likedMovies || [];
+    const stored = window.likedMovies || [];
     setLikedMovies(stored);
     setLoading(false);
   }, []);
@@ -37,12 +44,12 @@ export default function LikedPage() {
     const updated = likedMovies.filter(movie => movie.id !== movieId);
     setLikedMovies(updated);
     // Update the global storage
-    (window as any).likedMovies = updated;
+    window.likedMovies = updated;
   };
 
   const clearAllLiked = () => {
     setLikedMovies([]);
-    (window as any).likedMovies = [];
+    window.likedMovies = [];
   };
 
   if (loading) {
@@ -87,7 +94,7 @@ export default function LikedPage() {
               No liked movies yet
             </h2>
             <p className="text-gray-500 mb-6">
-              Start swiping to discover movies you&apos;ll love!
+              Start swiping to discover movies you'll love!
             </p>
             <button
               onClick={handleStartSwiping}

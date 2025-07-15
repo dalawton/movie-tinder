@@ -1,8 +1,8 @@
-// src/components/SwipeableCard.tsx
 'use client';
 
 import { useState } from 'react';
 import { useSprings, animated } from 'react-spring';
+import { useDrag } from '@use-gesture/react';
 import MovieCard from './MovieCard';
 
 type Movie = {
@@ -22,43 +22,58 @@ export default function SwipeableCard({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const [springs, api] = useSprings(movies.length, i => ({
-    opacity: 1,
-    transform: 'translateX(0%)',
-    from: { opacity: 0, transform: 'translateX(100%)' },
+    x: 0,
+    scale: 1,
+    display: 'block',
   }));
 
-  const handleSwipe = (dir: 'left' | 'right') => {
-    if (currentIndex >= movies.length) return;
+  const bind = useDrag(
+    ({ args: [index], down, movement: [mx], direction: [xDir], velocity }) => {
+      const trigger = velocity > 0.2;
+      const dir = xDir < 0 ? -1 : 1;
 
-    api.start(i => {
-      if (i === currentIndex) {
-        return {
-          opacity: 0,
-          transform: `translateX(${dir === 'left' ? '-' : ''}100%)`,
-        };
+      if (!down && trigger) {
+        const newIndex = currentIndex + 1;
+        api.start(i => {
+          if (i !== index) return;
+          return {
+            x: (200 + window.innerWidth) * dir,
+            scale: 1,
+            display: 'none',
+          };
+        });
+
+        onSwipe(dir === 1 ? 'right' : 'left', movies[index]);
+        setCurrentIndex(newIndex);
+      } else {
+        api.start(i => {
+          if (i !== index) return;
+          return {
+            x: down ? mx : 0,
+            scale: down ? 1.1 : 1,
+            display: 'block',
+          };
+        });
       }
-      return {};
-    });
-
-    onSwipe(dir, movies[currentIndex]);
-    setCurrentIndex(prev => prev + 1);
-  };
+    }
+  );
 
   return (
-    <div className="flex flex-col items-center mt-8">
-      {movies.map((movie, i) => (
+    <div className="relative w-[300px] h-[450px] mx-auto mt-10">
+      {springs.map(({ x, scale, display }, i) => (
         <animated.div
-          key={movie.imdbID}
-          style={springs[i]}
-          className="absolute w-[300px]"
+          key={movies[i].imdbID}
+          style={{
+            display,
+            transform: x.to(x => `translateX(${x}px)`),
+            scale,
+          }}
+          className="absolute"
+          {...bind(i)}
         >
-          {i === currentIndex && <MovieCard movie={movie} />}
+          {i === currentIndex && <MovieCard movie={movies[i]} />}
         </animated.div>
       ))}
-      <div className="flex gap-10 mt-56">
-        <button onClick={() => handleSwipe('left')} className="text-4xl">👎</button>
-        <button onClick={() => handleSwipe('right')} className="text-4xl">👍</button>
-      </div>
     </div>
   );
 }

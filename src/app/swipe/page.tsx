@@ -1,0 +1,59 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'next/navigation';
+import SwipeableCard from '../../components/SwipeableCard';
+import { getUserId } from '../../utils/user';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+type Movie = {
+  Title: string;
+  Year: string;
+  Poster: string;
+  imdbID: string;
+};
+
+const API_KEY = process.env.REACT_APP_API_URL;
+
+export default function SwipePage() {
+  const searchParams = useSearchParams();
+  const genre = searchParams.get('genre');
+  const USER_ID = getUserId();
+
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [liked, setLiked] = useState<Movie[]>([]);
+
+  useEffect(() => {
+    const fetchMovies = async () => {
+      const searchTerm = genre || 'star';
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${encodeURIComponent(searchTerm)}&type=movie`);
+      const data = await res.json();
+      if (data.Search) setMovies(data.Search);
+    };
+
+    fetchMovies();
+
+    const saved = localStorage.getItem(`likes-${USER_ID}`);
+    if (saved) setLiked(JSON.parse(saved));
+  }, [genre]);
+
+  const handleSwipe = (dir: 'left' | 'right', movie: Movie) => {
+    if (dir === 'right') {
+      const updated = [...liked, movie];
+      setLiked(updated);
+      localStorage.setItem(`likes-${USER_ID}`, JSON.stringify(updated));
+    }
+  };
+
+  return (
+    <main className="flex flex-col items-center min-h-screen p-6">
+      <h1 className="text-3xl font-bold">
+        {genre ? `${genre} Movies` : `🎲 Random Movies`}
+      </h1>
+      <SwipeableCard movies={movies} onSwipe={handleSwipe} />
+      <p className="mt-4">❤️ Liked: {liked.length}</p>
+    </main>
+  );
+}

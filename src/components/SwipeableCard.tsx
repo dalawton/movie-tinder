@@ -1,104 +1,48 @@
-'use client';
+// /components/SwipeableCard.tsx
+import React from 'react';
+import { Movie } from '../app/swipe/SwipePageContent'; // adjust import as needed
 
-import { useState } from 'react';
-import { useSprings, animated } from 'react-spring';
-import { useDrag } from '@use-gesture/react';
-import MovieCard from './MovieCard';
-
-type Movie = {
-  Title: string;
-  Year: string;
-  Poster: string;
-  imdbID: string;
+type Props = {
+  movies: Movie[];
+  onSwipeAction: (dir: 'left' | 'right', movie: Movie) => void;
 };
 
-export default function SwipeableCard({
-  movies,
-  onSwipe,
-}: {
-  movies: Movie[];
-  onSwipe: (dir: 'left' | 'right', movie: Movie) => void;
-}) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [springs, api] = useSprings(movies.length, i => ({
-    x: 0,
-    scale: 1,
-    display: 'block',
-  }));
+const SwipeableCard: React.FC<Props> = ({ movies, onSwipeAction }) => {
+  // Render one card at a time (top of stack)
+  const movie = movies[0];
 
-  const handleSwipe = (dir: 'left' | 'right') => {
-    if (currentIndex >= movies.length) return;
-    const movie = movies[currentIndex];
-    const direction = dir === 'left' ? -1 : 1;
-
-    // Animate the card off-screen
-    api.start(i => {
-      if (i !== currentIndex) return;
-      return {
-        x: (200 + window.innerWidth) * direction,
-        scale: 1,
-        display: 'none',
-      };
-    });
-
-    onSwipe(dir, movie);
-    setCurrentIndex(prev => prev + 1);
-  };
-
-  const bind = useDrag(
-    ({ args: [index], down, movement: [mx], direction: [xDir], velocity: [vx] }) => {
-      const trigger = Math.abs(vx) > 0.2;
-      const dir = xDir < 0 ? -1 : 1;
-
-      if (!down && trigger) {
-        handleSwipe(dir === 1 ? 'right' : 'left');
-      } else {
-        api.start(i => {
-          if (i !== index) return;
-          return {
-            x: down ? mx : 0,
-            scale: down ? 1.1 : 1,
-            display: 'block',
-          };
-        });
-      }
-    }
-  );
+  if (!movie) return null;
 
   return (
-    <>
-      <div className="relative w-[300px] h-[450px] mx-auto mt-10">
-        {springs.map(({ x, scale, display }, i) => (
-          <animated.div
-            key={movies[i].imdbID}
-            style={{
-              display,
-              transform: x.to(x => `translateX(${x}px)`),
-              scale,
-            }}
-            className="absolute"
-            {...bind(i)}
-          >
-            {i === currentIndex && <MovieCard movie={movies[i]} />}
-          </animated.div>
-        ))}
-      </div>
+    <div className="relative w-80 h-[500px] bg-white rounded-xl shadow-lg p-4">
+    <img
+      src={movie.poster_path ?? ''}
+      alt={movie.title}
+      className="w-full h-96 object-cover rounded"
+    />
+    <h2 className="text-xl font-bold mt-4 text-center">{movie.title}</h2>
+    <p className="text-sm text-gray-600 text-center">{movie.release_date}</p>
 
-      {/* Accessibility Buttons */}
-      <div className="flex justify-center gap-6 mt-6">
-        <button
-          onClick={() => handleSwipe('left')}
-          className="px-5 py-2 text-white bg-red-500 rounded hover:bg-red-600"
-        >
-          ❌ Dislike
-        </button>
-        <button
-          onClick={() => handleSwipe('right')}
-          className="px-5 py-2 text-white bg-green-500 rounded hover:bg-green-600"
-        >
-          ❤️ Like
-        </button>
-      </div>
-    </>
-  );
-}
+    {/* Buttons on the sides */}
+    <div className="absolute top-1/2 transform -translate-y-1/2 left-0">
+      <button
+        onClick={() => onSwipeAction('left', movie)}
+        className="ml-2 bg-red-500 text-white rounded-full px-4 py-2"
+      >
+        ⬅️ Skip
+      </button>
+    </div>
+    <div className="absolute top-1/2 transform -translate-y-1/2 right-0">
+      <button
+        onClick={() => onSwipeAction('right', movie)}
+        className="mr-2 bg-green-500 text-white rounded-full px-4 py-2"
+      >
+        Like ➡️
+      </button>
+    </div>
+  </div>
+
+    );
+  };
+
+export default SwipeableCard;

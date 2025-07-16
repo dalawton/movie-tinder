@@ -2,17 +2,69 @@
 
 import { useState, useEffect } from 'react';
 
-interface Movie {
-  id: number;
+type Movie = {
+  id: string;
   title: string;
   poster_path: string;
   overview: string;
   release_date: string;
   vote_average: number;
   genre_ids: number[];
-}
+  runtime?: string;
+  director?: string;
+  actors?: string;
+  awards?: string;
+  boxOffice?: string;
+  imdbRating?: string;
+  imdbVotes?: string;
+};
 
-// Extend the Window interface to include likedMovies
+// Type for OMDB API response
+type OMDBSearchResponse = {
+  Response: string;
+  Search?: Array<{
+    Title: string;
+    Year: string;
+    imdbID: string;
+    Type: string;
+    Poster: string;
+  }>;
+  totalResults?: string;
+  Error?: string;
+};
+
+type OMDBMovieResponse = {
+  Response: string;
+  Title?: string;
+  Year?: string;
+  Rated?: string;
+  Released?: string;
+  Runtime?: string;
+  Genre?: string;
+  Director?: string;
+  Writer?: string;
+  Actors?: string;
+  Plot?: string;
+  Language?: string;
+  Country?: string;
+  Awards?: string;
+  Poster?: string;
+  Ratings?: Array<{
+    Source: string;
+    Value: string;
+  }>;
+  Metascore?: string;
+  imdbRating?: string;
+  imdbVotes?: string;
+  imdbID?: string;
+  Type?: string;
+  DVD?: string;
+  BoxOffice?: string;
+  Production?: string;
+  Website?: string;
+  Error?: string;
+};
+
 declare global {
   interface Window {
     likedMovies: Movie[];
@@ -40,7 +92,7 @@ export default function LikedPage() {
     setLoading(false);
   }, []);
 
-  const removeFromLiked = (movieId: number) => {
+  const removeFromLiked = (movieId: string) => {
     const updated = likedMovies.filter(movie => movie.id !== movieId);
     setLikedMovies(updated);
     // Update the global storage
@@ -94,7 +146,7 @@ export default function LikedPage() {
               No liked movies yet
             </h2>
             <p className="text-gray-500 mb-6">
-              Start swiping to discover movies you'll love!
+              Start swiping to discover movies you&apos;ll love!
             </p>
             <button
               onClick={handleStartSwiping}

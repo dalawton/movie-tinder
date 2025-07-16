@@ -1,9 +1,8 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import SwipeableCard from '../../components/SwipeableCard';
 import { getUserId } from '../../../utils/user';
-import { useRouter } from 'next/navigation';
 
 export type Movie = {
   id: string;
@@ -66,6 +65,10 @@ const safeSearchTerms = [
   'summer', 'spring', 'golden', 'silver', 'beauty', 'wonder', 'journey'
 ];
 
+const randomIndex = Math.floor(Math.random() * safeSearchTerms.length);
+
+const randomElement = safeSearchTerms[randomIndex];
+
 const API_KEY = process.env.NEXT_PUBLIC_OMDB_API_KEY;
 
 function SwipePageContent() {
@@ -91,7 +94,7 @@ function SwipePageContent() {
     const init = async () => {
       window.likedMovies ||= [];
       setLiked(window.likedMovies);
-      await fetchMovies(currentSearchTerm, 1, false);
+      await fetchMovies(randomElement, 1, false);
     };
 
     init();
@@ -118,7 +121,7 @@ function SwipePageContent() {
 
   const getMovieDetails = async (imdbID: string): Promise<Movie | null> => {
     try {
-      const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}`);
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&i=${imdbID}&plot=full`);
       const data = await res.json();
       return data.Response === 'True' ? convertOMDBToMovie(data) : null;
     } catch {
@@ -132,7 +135,7 @@ function SwipePageContent() {
       if (!append) setLoading(true);
       else setIsLoadingMore(true);
 
-      const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${term}&type=movie&page=${page}`);
+      const res = await fetch(`https://www.omdbapi.com/?apikey=${API_KEY}&s=${term}&type=movie&page=${page}&plot=full`);
       const data: OMDBSearchResponse = await res.json();
 
       if (data.Response === 'False' || !data.Search) {
@@ -158,12 +161,12 @@ function SwipePageContent() {
   };
 
   const loadNextSearchTerm = () => {
-    const nextIndex = (searchTermIndex + 1) % safeSearchTerms.length;
-    const nextTerm = safeSearchTerms[nextIndex];
-    setSearchTermIndex(nextIndex);
-    setCurrentSearchTerm(nextTerm);
+    const randomIndex = Math.floor(Math.random() * safeSearchTerms.length);
+    const randomElement = safeSearchTerms[randomIndex];
+    setSearchTermIndex(randomIndex);
+    setCurrentSearchTerm(randomElement);
     setCurrentPage(1);
-    fetchMovies(nextTerm, 1, true);
+    fetchMovies(randomElement, 1, true);
   };
 
   const loadMoreMovies = () => {
@@ -179,6 +182,7 @@ function SwipePageContent() {
       const updated = [...liked, movie];
       setLiked(updated);
       window.likedMovies = updated;
+      localStorage.setItem('likedMovies', JSON.stringify(updated));
     }
 
     if (movies.length <= 3 && !isLoadingMore && !loading) {
@@ -206,7 +210,7 @@ function SwipePageContent() {
 
   return (
     <main className="flex flex-col items-center min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-4">🎲 Random Movies</h1>
+      <h1 className="text-3xl font-bold mb-4">🎲 Tinder (Movie Edition)</h1>
       <div className="relative w-full flex justify-center mb-8">
         <SwipeableCard movies={movies} onSwipeAction={handleSwipe} />
       </div>

@@ -1,6 +1,6 @@
 // /components/SwipeableCard.tsx
-import React from 'react';
-import { Movie } from '../app/swipe/SwipePageContent'; // adjust import as needed
+import React, {useState} from 'react';
+import { Movie } from '../app/swipe/SwipePageContent'; 
 
 type Props = {
   movies: Movie[];
@@ -8,41 +8,53 @@ type Props = {
 };
 
 const SwipeableCard: React.FC<Props> = ({ movies, onSwipeAction }) => {
-  // Render one card at a time (top of stack)
+  const [showDescription, setShowDescription] = useState(false);
   const movie = movies[0];
-
   if (!movie) return null;
 
   return (
-    <div className="relative w-80 h-[500px] bg-white rounded-xl shadow-lg p-4">
-    <img
-      src={movie.poster_path ?? ''}
-      alt={movie.title}
-      className="w-full h-96 object-cover rounded"
-    />
-    <h2 className="text-xl font-bold mt-4 text-center">{movie.title}</h2>
-    <p className="text-sm text-gray-600 text-center">{movie.release_date}</p>
-
-    {/* Buttons on the sides */}
-    <div className="absolute top-1/2 transform -translate-y-1/2 left-0">
+    <div className="flex items-center justify-center space-x-4">
+      {/* Skip Button - Left Side */}
       <button
         onClick={() => onSwipeAction('left', movie)}
-        className="ml-2 bg-red-500 text-white rounded-full px-4 py-2"
+        className="bg-red-500 text-white rounded-full px-4 py-2"
       >
         ⬅️ Skip
       </button>
-    </div>
-    <div className="absolute top-1/2 transform -translate-y-1/2 right-0">
+
+      {/* Card */}
+      <div className="w-80 h-[600px] bg-white rounded-xl shadow-lg p-4 flex flex-col items-center">
+        {/* Poster with overlay */}
+        <div
+          className="relative h-120 w-full cursor-pointer"
+          onClick={() => setShowDescription((prev) => !prev)}
+        >
+          <img
+            src={movie.poster_path ?? ''}
+            alt={movie.title}
+            className="w-full h-full object-cover rounded"
+          />
+          {showDescription && (
+            <div className="absolute inset-2 bg-black bg-opacity-80 text-white p-4 rounded overflow-y-auto">
+              <p className="text-sm text-center">{movie.overview || 'No description available.'}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Title and date */}
+        <h2 className="text-xl text-gray-600 font-bold mt-2 text-center">{movie.title}</h2>
+        <p className="text-sm text-gray-600 text-center">{movie.release_date}</p>
+      </div>
+
+      {/* Like Button - Right Side */}
       <button
         onClick={() => onSwipeAction('right', movie)}
-        className="mr-2 bg-green-500 text-white rounded-full px-4 py-2"
+        className="bg-green-500 text-white rounded-full px-4 py-2"
       >
         Like ➡️
       </button>
     </div>
-  </div>
-
-    );
-  };
+  );
+};
 
 export default SwipeableCard;

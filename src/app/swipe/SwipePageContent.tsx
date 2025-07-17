@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import SwipeableCard from '../../components/SwipeableCard';
-import { getUserId } from '../../../utils/user';
+import { getUserId } from '../../utils/user';
 
 export type Movie = {
   id: string;

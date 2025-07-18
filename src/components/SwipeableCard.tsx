@@ -1,6 +1,5 @@
-// /components/SwipeableCard.tsx
 import React, {useState} from 'react';
-import { Movie } from '../app/swipe/SwipePageContent'; 
+import { Movie } from '@/types/movie'; 
 
 type Props = {
   movies: Movie[];

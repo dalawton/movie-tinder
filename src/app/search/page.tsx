@@ -30,10 +30,10 @@ export default function SearchPage() {
   };
 
   const handleGenreToggle = (genre: string) => {
-    setSearchForm(prev => ({
+    setSearchForm((prev) => ({
       ...prev,
       selectedGenres: prev.selectedGenres.includes(genre)
-        ? prev.selectedGenres.filter(g => g !== genre)
+        ? prev.selectedGenres.filter((g: string) => g !== genre)
         : [...prev.selectedGenres, genre]
     }));
   };

@@ -40,9 +40,9 @@ function SwipePageContent() {
   };
 
   const handleGenreToggle = (genre: string) => {
-    setSelectedGenres(prev => 
+    setSelectedGenres((prev: string[]) => 
       prev.includes(genre) 
-        ? prev.filter(g => g !== genre)
+        ? prev.filter((g: string) => g !== genre)
         : [...prev, genre]
     );
   };

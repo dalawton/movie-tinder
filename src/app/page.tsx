@@ -3,11 +3,12 @@
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { MovieApiService } from '@/services/movieApi';
+import { GenreStats } from '@/types/movie';
 import { Movie } from '@/types/movie';
 
 export default function HomePage() {
   const router = useRouter();
-  const [stats, setStats] = useState<any>(null);
+  const [stats, setStats] = useState<GenreStats | null>(null);
 
   useEffect(() => {
     loadStats();

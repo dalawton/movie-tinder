@@ -43,7 +43,7 @@ export const useMovieSwipe = (userId: string) => {
   
   const handleSwipe = async (direction: 'left' | 'right', movie: Movie) => {
 
-    setMovies(prev => prev.filter(m => m.id !== movie.id));
+    setMovies((prevMovies: Movie[]) => prevMovies.filter((m: Movie) => m.id !== movie.id));
     
     const swipeAction: SwipeAction = {
       userId,

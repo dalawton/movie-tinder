@@ -10,9 +10,9 @@ export interface Movie {
     actors: string;
     poster: string;
     runtime: string;
-    imdb_rating: string;
+    imdbRating: string;
     confidence: number;
-    detected_genres: string[];
+    detectedGenres: string[];
     title_keywords: string[];
     id: string;
     poster_path: string;
@@ -33,9 +33,9 @@ export interface MovieSearchRequest {
 }
 
 export interface GenreStats {
-    genre_distribution: Record<string, number>;
-    total_movies: number;
-    average_confidence: number;
+    genreDistribution: Record<string, number>;
+    totalMovies: number;
+    averageConfidence: number;
 }
 
 export interface SwipeAction {

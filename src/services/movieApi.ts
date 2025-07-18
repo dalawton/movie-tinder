@@ -18,7 +18,7 @@ export class MovieApiService {
             poster_path: inital_movie.poster,
             overview: inital_movie.plot,
             release_date: inital_movie.year,
-            vote_average: parseFloat(inital_movie.imdb_rating) || 0,
+            vote_average: parseFloat(inital_movie.imdbRating) || 0,
             genre_ids: [],
         };
     }
@@ -172,7 +172,7 @@ export class MovieApiService {
     });
     
     const movies = await response.json();
-    return movies.map(this.convertToCorrectMovieFormat);
+    return movies.map((movie: any) => this.convertToCorrectMovieFormat(movie));
   }
   
 }

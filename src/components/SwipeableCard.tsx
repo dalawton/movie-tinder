@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import { Movie } from '@/types/movie'; 
 
-type Props = {
+interface SwipeableCardProps {
   movies: Movie[];
   onSwipeAction: (dir: 'left' | 'right', movie: Movie) => void;
-};
+}
 
-const SwipeableCard: React.FC<Props> = ({ movies, onSwipeAction }) => {
+const SwipeableCard: React.FC<SwipeableCardProps> = ({ movies, onSwipeAction }) => {
   const [showDescription, setShowDescription] = useState(false);
   const movie = movies[0];
   if (!movie) return null;

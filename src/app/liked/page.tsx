@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Movie } from '../swipe/SwipePageContent'; // adjust path if needed
+import { Movie } from '@/types/movie';
 
 export default function LikedPage() {
   const [likedMovies, setLikedMovies] = useState<Movie[]>([]);
@@ -18,7 +18,7 @@ export default function LikedPage() {
   }, []);
 
   const toggleDescription = (movieId: string) => {
-    setActiveMovieId(prev => (prev === movieId ? null : movieId));
+    setActiveMovieId((prevMovies: Movie[]) => prevMovies.filter((m: Movie) => m.id !== movieId))
   };
 
   return (

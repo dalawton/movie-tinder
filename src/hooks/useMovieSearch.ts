@@ -1,7 +1,7 @@
 // Search functionality hook
 import { useState, useEffect } from 'react';
-import { MovieApiService } from '@/services/movieApi';
-import { Movie, MovieSearchRequest } from '@/types/movie';
+import { MovieApiService } from '../services/movieApi';
+import { Movie, MovieSearchRequest } from '../types/movie';
 
 export const useMovieSearch = () => {
     const [ movies, setMovies ] = useState<Movie[]>([]);

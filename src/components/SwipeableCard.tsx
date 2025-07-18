@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { Movie } from '@/types/movie'; 
+import React, { useState } from 'react';
+import { Movie } from '../types/movie'; 
 
 interface SwipeableCardProps {
   movies: Movie[];
@@ -9,46 +9,86 @@ interface SwipeableCardProps {
 const SwipeableCard: React.FC<SwipeableCardProps> = ({ movies, onSwipeAction }) => {
   const [showDescription, setShowDescription] = useState(false);
   const movie = movies[0];
+  
   if (!movie) return null;
 
   return (
-    <div className="flex items-center justify-center space-x-4">
+    <div className="swipe-container">
       {/* Skip Button - Left Side */}
       <button
         onClick={() => onSwipeAction('left', movie)}
-        className="bg-red-500 text-white rounded-full px-4 py-2"
+        className="swipe-button skip-button"
       >
         ⬅️ Skip
       </button>
 
       {/* Card */}
-      <div className="w-80 h-[600px] bg-white rounded-xl shadow-lg p-4 flex flex-col items-center">
+      <div className="swipe-card">
         {/* Poster with overlay */}
         <div
-          className="relative h-120 w-full cursor-pointer"
-          onClick={() => setShowDescription((prev) => !prev)}
+          style={{
+            position: 'relative',
+            width: '100%',
+            cursor: 'pointer'
+          }}
+          onClick={() => setShowDescription((prev: boolean) => !prev)}
         >
           <img
-            src={movie.poster_path ?? ''}
+            src={movie.poster_path || movie.poster || ''}
             alt={movie.title}
-            className="w-full h-full object-cover rounded"
+            style={{
+              width: '100%',
+              height: '400px',
+              objectFit: 'cover',
+              borderRadius: '12px'
+            }}
+            onError={(e) => {
+              e.currentTarget.src = '/placeholder-movie.png';
+            }}
           />
           {showDescription && (
-            <div className="absolute inset-2 bg-black bg-opacity-80 text-white p-4 rounded overflow-y-auto">
-              <p className="text-sm text-center">{movie.overview || 'No description available.'}</p>
+            <div style={{
+              position: 'absolute',
+              top: '8px',
+              left: '8px',
+              right: '8px',
+              bottom: '8px',
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              color: 'white',
+              padding: '16px',
+              borderRadius: '12px',
+              overflowY: 'auto'
+            }}>
+              <p style={{ fontSize: '0.875rem', textAlign: 'center' }}>
+                {movie.overview || movie.plot || 'No description available.'}
+              </p>
             </div>
           )}
         </div>
 
         {/* Title and date */}
-        <h2 className="text-xl text-gray-600 font-bold mt-2 text-center">{movie.title}</h2>
-        <p className="text-sm text-gray-600 text-center">{movie.release_date}</p>
+        <h2 style={{
+          fontSize: '1.25rem',
+          color: '#374151',
+          fontWeight: 'bold',
+          marginTop: '16px',
+          textAlign: 'center'
+        }}>
+          {movie.title}
+        </h2>
+        <p style={{
+          fontSize: '0.875rem',
+          color: '#6b7280',
+          textAlign: 'center'
+        }}>
+          {movie.release_date || movie.year}
+        </p>
       </div>
 
       {/* Like Button - Right Side */}
       <button
         onClick={() => onSwipeAction('right', movie)}
-        className="bg-green-500 text-white rounded-full px-4 py-2"
+        className="swipe-button like-button"
       >
         Like ➡️
       </button>

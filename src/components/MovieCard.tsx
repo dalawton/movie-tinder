@@ -1,13 +1,40 @@
-import { Movie } from "@/types/movie";
+import { Movie } from "../types/movie";
 
-export default function MovieCard({ movie }: { movie: Movie }) {
+interface MovieCardProps {
+  movie: Movie;
+  onClick?: () => void;
+}
+
+export default function MovieCard({ movie, onClick }: MovieCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <img src={movie.poster_path} alt={movie.title} className="w-full" />
-      <h3 className="text-lg font-semibold p-2">
-        {movie.title} ({movie.release_date})
-        {movie.overview}
-      </h3>
+    <div className="movie-card" onClick={onClick}>
+      <img 
+        src={movie.poster_path || movie.poster} 
+        alt={movie.title} 
+        className="movie-poster"
+        onError={(e) => {
+          e.currentTarget.src = '/placeholder-movie.png';
+        }}
+      />
+      <div className="movie-info">
+        <h3 className="movie-title">
+          {movie.title}
+        </h3>
+        <p className="movie-meta">
+          {movie.release_date || movie.year}
+        </p>
+        {movie.overview && (
+          <p className="movie-description">
+            {movie.overview}
+          </p>
+        )}
+        
+        <div className="text-sm text-gray mt-1">
+          <p><strong>Director:</strong> {movie.director}</p>
+          <p><strong>Genre:</strong> {movie.genre}</p>
+          <p><strong>Rating:</strong> ⭐ {movie.imdbRating || movie.imdbRating}</p>
+        </div>
+      </div>
     </div>
   );
 }

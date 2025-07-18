@@ -1,7 +1,7 @@
 // Swipe functionality hook
 import { useState, useEffect } from 'react';
-import { MovieApiService } from '@/services/movieApi';
-import { Movie, SwipeAction } from '@/types/movie';
+import { MovieApiService } from '../services/movieApi';
+import { Movie, SwipeAction } from '../types/movie';
 
 export const useMovieSwipe = (userId: string) => {
   const [movies, setMovies] = useState<Movie[]>([]);

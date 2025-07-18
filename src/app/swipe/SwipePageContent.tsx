@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import SwipeableCard from '@/components/SwipeableCard';
-import { getUserId } from '@/utils/user';
-import { useMovieSwipe } from '@/hooks/useMovieSwipe';
-import { MovieApiService } from '@/services/movieApi';
-import { Movie } from '@/types/movie';
+import SwipeableCard from '../../components/SwipeableCard';
+import { getUserId } from '../../utils/user';
+import { useMovieSwipe } from '../../hooks/useMovieSwipe';
+import { MovieApiService } from '../../services/movieApi';
+import { Movie } from '../../types/movie';
 
 function SwipePageContent() {
   const [userId, setUserId] = useState('');
@@ -17,6 +17,8 @@ function SwipePageContent() {
   const {
     movies,
     likedMovies,
+    loading,
+    error,
     handleSwipe,
     loadRandomMovies,
     getRecommendations
@@ -27,10 +29,10 @@ function SwipePageContent() {
     const id = getUserId();
     setUserId(id);
 
-    initalizeApp();
+    initializeApp();
   }, []);
 
-  const initalizeApp = async () => {
+  const initializeApp = async () => {
     try {
       const genres = await MovieApiService.getAvailableGenres();
       setAvailableGenres(genres);
@@ -66,79 +68,124 @@ function SwipePageContent() {
     getRecommendations();
   };
 
-  if (movies.length === 0) {
+  if (loading) {
     return (
-      <div className="p-6 text-center">
-        <h2 className="text-xl font-bold mb-4">No more movies!</h2>
-        <p className="mb-4">You've seen all available movies with your current filters.</p>
-        <div className="space-y-2">
+      <div className="flex flex-center" style={{ minHeight: '100vh' }}>
+        <div className="text-center">
+          <div className="spinner" style={{ width: '40px', height: '40px', margin: '0 auto 16px' }}></div>
+          <p>Loading movies...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-center" style={{ minHeight: '100vh' }}>
+        <div className="card text-center">
+          <h2 className="text-xl font-bold mb-2">⚠️ Error</h2>
+          <p className="text-red mb-3">{error}</p>
           <button 
             onClick={() => loadRandomMovies()}
-            className="block mx-auto px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="btn btn-primary"
           >
-            Load More Movies
+            Try Again
           </button>
-          <button 
-            onClick={clearGenreFilter}
-            className="block mx-auto px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
-          >
-            Clear Filters
-          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (movies.length === 0) {
+    return (
+      <div className="flex flex-center" style={{ minHeight: '100vh', padding: '24px' }}>
+        <div className="card text-center" style={{ maxWidth: '400px' }}>
+          <div style={{ fontSize: '4rem', marginBottom: '16px' }}>🎬</div>
+          <h2 className="text-xl font-bold mb-2">No more movies!</h2>
+          <p className="text-gray mb-4">You've seen all available movies with your current filters.</p>
+          <div className="flex flex-column gap-2">
+            <button 
+              onClick={() => loadRandomMovies()}
+              className="btn btn-primary"
+            >
+              Load More Movies
+            </button>
+            <button 
+              onClick={clearGenreFilter}
+              className="btn btn-secondary"
+            >
+              Clear Filters
+            </button>
+            <button 
+              onClick={() => window.location.href = '/liked'}
+              className="btn btn-success"
+            >
+              View Liked Movies ({likedMovies.length})
+            </button>
+          </div>
         </div>
       </div>
     );
   }
   
   return (
-    <main className="flex flex-col items-center min-h-screen p-6">
-      <h1 className="text-3xl font-bold mb-4">🎬 Movie Swiper</h1>
-      
-      <div className="mb-6 flex flex-wrap gap-2 justify-center">
-        <button
-          onClick={() => setShowGenreFilter(!showGenreFilter)}
-          className="px-4 py-2 bg-purple-500 text-white rounded hover:bg-purple-600"
-        >
-          🎭 Filter by Genre
-        </button>
-        <button
-          onClick={handleGetRecommendations}
-          className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-        >
-          ⭐ Get Recommendations
-        </button>
-        <button
-          onClick={() => loadRandomMovies()}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          🎲 Random Movies
-        </button>
+    <main className="flex flex-column" style={{ minHeight: '100vh', padding: '24px' }}>
+      <div className="text-center mb-4">
+        <h1 className="text-3xl font-bold mb-3">🎬 Movie Swiper</h1>
+        
+        <div className="flex flex-wrap gap-2" style={{ justifyContent: 'center', marginBottom: '24px' }}>
+          <button
+            onClick={() => setShowGenreFilter(!showGenreFilter)}
+            className="btn"
+            style={{ 
+              background: showGenreFilter ? '#8b5cf6' : '#6366f1',
+              color: 'white'
+            }}
+          >
+            🎭 Filter by Genre
+          </button>
+          <button
+            onClick={handleGetRecommendations}
+            className="btn btn-warning"
+          >
+            ⭐ Get Recommendations
+          </button>
+          <button
+            onClick={() => loadRandomMovies()}
+            className="btn btn-primary"
+          >
+            🎲 Random Movies
+          </button>
+        </div>
       </div>
+      
       {showGenreFilter && (
-        <div className="mb-6 p-4 bg-gray-100 rounded-lg w-full max-w-2xl">
+        <div className="card mb-4" style={{ maxWidth: '600px', margin: '0 auto 24px' }}>
           <h3 className="font-bold mb-3">Select Genres:</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
-            {availableGenres.map(genre => (
-              <label key={genre} className="flex items-center space-x-2">
+          <div className="grid grid-3 gap-1 mb-3">
+            {availableGenres.map((genre: string) => (
+              <label key={genre} className="checkbox-group">
                 <input
                   type="checkbox"
                   checked={selectedGenres.includes(genre)}
                   onChange={() => handleGenreToggle(genre)}
-                  className="rounded text-purple-600 focus:ring-purple-500"
+                  className="checkbox"
+                  style={{ accentColor: '#8b5cf6' }}
                 />
                 <span className="text-sm">{genre}</span>
               </label>
             ))}
           </div>
-          <div className="flex gap-2 justify-center">
+          <div className="flex flex-center gap-2">
             <button
               onClick={applyGenreFilter}
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              className="btn btn-success"
             >
               Apply Filter
             </button>
             <button
               onClick={clearGenreFilter}
-              className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+              className="btn btn-secondary"
             >
               Clear All
             </button>
@@ -147,25 +194,33 @@ function SwipePageContent() {
       )}
 
       {selectedGenres.length > 0 && (
-        <div className="mb-4 p-2 bg-blue-100 rounded">
-          <span className="text-sm font-medium">Filtered by: </span>
-          <span className="text-sm">{selectedGenres.join(', ')}</span>
+        <div className="text-center mb-3">
+          <div style={{ 
+            display: 'inline-block',
+            padding: '8px 16px', 
+            backgroundColor: '#dbeafe', 
+            borderRadius: '20px',
+            color: '#1e40af'
+          }}>
+            <span className="text-sm font-medium">Filtered by: </span>
+            <span className="text-sm">{selectedGenres.join(', ')}</span>
+          </div>
         </div>
       )}
 
-      <div className="relative w-full flex justify-center mb-8">
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <SwipeableCard movies={movies} onSwipeAction={handleSwipe} />
       </div>
 
       {movies.length > 0 && (
-        <div className="bg-white p-4 rounded-lg shadow-md max-w-md text-center mb-6">
+        <div className="card text-center" style={{ maxWidth: '400px', margin: '24px auto 0' }}>
           <h3 className="font-bold text-lg mb-2">{movies[0].title}</h3>
-          <div className="text-sm text-gray-600 space-y-1">
+          <div className="text-sm text-gray" style={{ lineHeight: '1.6' }}>
             <p><strong>Year:</strong> {movies[0].year}</p>
             <p><strong>Director:</strong> {movies[0].director}</p>
             <p><strong>Genre:</strong> {movies[0].genre}</p>
             <p><strong>Runtime:</strong> {movies[0].runtime}</p>
-            <p><strong>IMDB Rating:</strong> {movies[0].imdbRating}</p>
+            <p><strong>IMDB Rating:</strong> ⭐ {movies[0].imdbRating || movies[0].imdbRating}</p>
             {movies[0].confidence && (
               <p><strong>Match Confidence:</strong> {(movies[0].confidence * 100).toFixed(1)}%</p>
             )}
@@ -173,14 +228,50 @@ function SwipePageContent() {
         </div>
       )}
 
-      <div className="mt-auto pt-6 text-center">
-        <p className="text-lg font-semibold">❤️ Liked: {likedMovies.length}</p>
-        <p className="text-sm text-gray-500">🎬 Remaining: {movies.length}</p>
-        <button 
-          className="mt-2 text-sm text-blue-500 hover:text-blue-700" 
-          onClick={handleSeeLiked}
+      <div className="text-center mt-4">
+        <div style={{ 
+          display: 'inline-block',
+          padding: '16px 24px',
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+        }}>
+          <p className="text-lg font-semibold text-green">❤️ Liked: {likedMovies.length}</p>
+          <p className="text-sm text-gray">🎬 Remaining: {movies.length}</p>
+          <button 
+            className="btn btn-primary mt-2" 
+            onClick={handleSeeLiked}
+          >
+            View Liked Movies
+          </button>
+        </div>
+      </div>
+
+      {/* Navigation buttons */}
+      <div style={{
+        position: 'fixed',
+        bottom: '16px',
+        right: '16px',
+        display: 'flex',
+        gap: '8px'
+      }}>
+        <button
+          onClick={() => window.location.href = '/'}
+          className="btn btn-secondary"
+          style={{ borderRadius: '25px' }}
         >
-          View Liked Movies
+          🏠 Home
+        </button>
+        <button
+          onClick={() => window.location.href = '/search'}
+          className="btn"
+          style={{ 
+            borderRadius: '25px',
+            background: '#8b5cf6',
+            color: 'white'
+          }}
+        >
+          🔍 Search
         </button>
       </div>
     </main>

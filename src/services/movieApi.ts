@@ -1,6 +1,6 @@
 // backend api integration
-import { SwipeAction, GenreStats } from "@/types/movie";
-import { Movie, MovieSearchRequest } from "@/types/movie";
+import { SwipeAction, GenreStats } from "../types/movie";
+import { Movie, MovieSearchRequest } from "../types/movie";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
